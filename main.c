@@ -13,10 +13,17 @@
 
 void main (void){
    setup_oscillator(OSC_16MHZ);
+   set_tris_c(0x00); //Ponemos todos los bits en 0, ya que seran de salida para los leds
+   int count=0b10000000; //Hacemos un contador el cual sera nuestra base para el valor de salida
 #ifdef __DEBUG_SERIAL__ //Deberiamos de proteger nuestras depuraciones de esta forma o usar una macro ya protegida.
    printf("Hola Mundo\n");//Puedes usar putc o printf. Revisa la documentación de CCS para ver que mas puedes hacer.
 #endif
    while(1){
-      
+      output_c(count); //count representa el byte de salida del puerto, (256 = puerto 7 / 128= puerto 6)
+      count/=2; //Se divide entre 2 para llevar el conteo exacto del puerto (10000000(Prto 7)-01000000-64(Prto5) etc)
+      if(count==0){ //Si (el contador es igual a 0) es decir llega al LSB
+         count=0b10000000; //El contador sera 256 de nuevo osea el MSB
+      }
+      delay_ms(500); //Hacemos un retraso de 500ms para poder observar el desplazamiento de los bits
    }
 }	
